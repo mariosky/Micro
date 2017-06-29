@@ -32,4 +32,7 @@ namespace Micrographia
             _mainFrame.Navigate(new MediaPage());
         }
     }
+
+
+
 }

@@ -213,7 +213,8 @@ namespace Micrographia
             if (!_recording)
             {
                 _firstFrameTime = null;
-                string fileName = String.Format(  @"C:\Users\Ale\Desktop\Video{0}.avi", Guid.NewGuid().ToString());
+               
+                string fileName = String.Format(  @"{0}\Video{1}.avi", AppDomain.CurrentDomain.BaseDirectory, Guid.NewGuid().ToString());
                 RecordButton.Content = "Stop";
                 RecordButton.Background = System.Windows.Media.Brushes.Red;
 
@@ -241,7 +242,7 @@ namespace Micrographia
         {
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(Image));
-                using (var filestream = new FileStream(String.Format(@"C:\Users\Ale\Desktop\Pic{0}.png", Guid.NewGuid().ToString() ), FileMode.Create))
+                using (var filestream = new FileStream(String.Format(@"{0}\Pic{1}.png", AppDomain.CurrentDomain.BaseDirectory, Guid.NewGuid().ToString()), FileMode.Create))
                 {
                     encoder.Save(filestream);
                 }
