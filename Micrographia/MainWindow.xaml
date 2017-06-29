@@ -6,18 +6,11 @@
         xmlns:local="clr-namespace:Micrographia"
         mc:Ignorable="d"
         Title="Microscope Imaging Software" Height="350" Width="628.056">
-    <Window.Background>
-        <ImageBrush/>
-    </Window.Background>
-    <Grid  OpacityMask="Black" Margin="0,0,-8,0">
-        <Image x:Name="VideoPlayer" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Stretch="Uniform" />
-        <ComboBox HorizontalAlignment="Left" Margin="452,60,0,0" VerticalAlignment="Top" Width="120"
-                  DisplayMemberPath="Name"
-                  ItemsSource="{Binding VideoDevices}"
-                  SelectedItem="{Binding CurrentDevice}" SelectionChanged="ComboBox_SelectionChanged" />
-        <Button Content="Start" HorizontalAlignment="Left" Margin="496,125,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="-0.212,0.469" Click="Button_Start"/>
-        <Button Content="Stop" HorizontalAlignment="Left" Margin="496,150,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="-0.212,0.469" Click="Button_Stop"/>
-        <Button Content="Record" HorizontalAlignment="Left" Margin="497,175,0,0" VerticalAlignment="Top" Width="75" Click="Button_Record"/>
-
-    </Grid>
+ <Grid>
+        <Frame x:Name="_mainFrame" >
+       
+            
+      
+        </Frame>
+  </Grid>
 </Window>
