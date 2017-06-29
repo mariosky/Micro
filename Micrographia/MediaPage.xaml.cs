@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using Accord.Video;
 using Accord.Video.FFMPEG;
@@ -63,9 +54,12 @@ namespace Micrographia
                 _videoSource.SignalToStop();
                 _videoSource.NewFrame -= new NewFrameEventHandler(this.DisplayWindow.video_NewFrame);
             }
-        }
+
+            DisplayWindow.Image = null;    
 
     }
+
+}
 
     /// <summary>
     /// Interaction logic for Media.xaml
@@ -76,11 +70,28 @@ namespace Micrographia
         {
             InitializeComponent();
             this.DataContext = this;
-            this.VideoDevices = GetVideoDevices();
-
             myCamera = new Camera(this);
+            this.VideoDevices = GetVideoDevices();
+            if (VideoDevices.Count > 0)
+            {
+                CurrentDevice = VideoDevices[0];
+            }
+            else
+            {
+                MessageBox.Show("No webcam found");
+            }
+
+            
            
         }
+
+        private BitmapImage _image;
+        public BitmapImage Image
+        {
+            get { return _image; }
+            set { _image = value; }
+        }
+
 
         public ObservableCollection<FilterInfo> VideoDevices { get; set; }
         public Camera myCamera;
@@ -90,8 +101,6 @@ namespace Micrographia
             set
             {
                 _currentDevice = value;
-
-
                 this.OnPropertyChanged("CurrentDevice");
                 myCamera.CurrentDevice = value;
             }
@@ -143,6 +152,7 @@ namespace Micrographia
                     if (_firstFrameTime != null)
                     {
                         _writer.WriteVideoFrame(eventArgs.Frame, DateTime.Now - _firstFrameTime.Value);
+                       
                     }
                     else
                     {
@@ -151,18 +161,21 @@ namespace Micrographia
                     }
                 }
 
-                BitmapImage bi;
+                
                 using (var bitmap = eventArgs.Frame)
                 {
-                    bi = ToBitmapImage(bitmap);
+                    Image = ToBitmapImage(bitmap);
                 }
-                bi.Freeze(); // avoid cross thread operations and prevents leaks
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { VideoPlayer.Source = bi; }));
+                Image.Freeze(); // avoid cross thread operations and prevents leaks
+
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { VideoPlayer.Source = Image; }));
             }
-            catch (Exception exc)
+            catch (VideoException exc)
             {
-                MessageBox.Show("Error on _videoSource_NewFrame:\n" + exc.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //StopCamera();
+                MessageBox.Show("Error on _videoSource_NewFrame:\n" +_writer.Codec.ToString()+_writer.BitRate.ToString()+" " +_writer.Height.ToString() +" " + _writer.Width.ToString() + Image.Height.ToString() + " " + _writer.Width.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                myCamera.Stop();
+                _recording = false;
+
             }
 
 
@@ -198,22 +211,20 @@ namespace Micrographia
         private void Button_Record(object sender, RoutedEventArgs e)
         {
 
-            string fileName = @"C:\Users\mariosky\Documents\Video.avi";
-
-            //int height = (int)(area.Height / heightScale);
-            //int width = (int)(area.Width / widthScale);
-
-            double height = VideoPlayer.Height;
-            double width = VideoPlayer.Width;
-            int framerate = 1000 / 20;
-            int videoBitRate = 1200 * 1000;
-
-
+            string fileName = @"C:\Users\Ale\Desktop\Video.avi";
+            _firstFrameTime = null;
 
             DateTime RecordingStartTime = DateTime.MinValue;
             _writer = new VideoFileWriter();
-            _writer.Open(@"Video.avi", 200, 600);
+            _writer.Open(fileName, (int) Math.Round(Image.Width, 0), (int) Math.Round(Image.Height, 0), 1000/24, VideoCodec.MPEG4);
             _recording = true;
+        }
+
+        private void Button_Stop_Record(object sender, RoutedEventArgs e)
+        {
+            _recording = false;
+            _writer.Close();
+            _writer.Dispose();
         }
     }
 }
