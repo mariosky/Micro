@@ -5,20 +5,17 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Micrographia"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+    
       Title="Media">
 
     <Grid  OpacityMask="Black" Margin="0,0,-8,0">
-
         <Image x:Name="VideoPlayer" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Stretch="Uniform"  Source="{Binding Image}" />
-            <ComboBox HorizontalAlignment="Left" Margin="452,60,0,0" VerticalAlignment="Top" Width="120"
+            <ComboBox HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"
                   DisplayMemberPath="Name"
                   ItemsSource="{Binding VideoDevices}"
-                  SelectedItem="{Binding CurrentDevice}" SelectionChanged="ComboBox_SelectionChanged" />
-            <Button Content="Start" HorizontalAlignment="Left" Margin="496,125,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="-0.212,0.469" Click="Button_Start"/>
-            <Button Content="Stop" HorizontalAlignment="Left" Margin="496,150,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="-0.212,0.469" Click="Button_Stop"/>
-            <Button Content="Record" HorizontalAlignment="Left" Margin="497,175,0,0" VerticalAlignment="Top" Width="75" Click="Button_Record"/>
-            <Button Content="StopRecord" HorizontalAlignment="Left" Margin="497,200,0,0" VerticalAlignment="Top" Width="75" Click="Button_Stop_Record"/>
+                  SelectedItem="{Binding CurrentDevice}" SelectionChanged="ComboBox_SelectionChanged" RenderTransformOrigin="0.472,0.572" />
+        <Button x:Name="RecordButton"  Content="Record" HorizontalAlignment="Left" Margin="141,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Record" />
+            <Button x:Name="PictureButton" Content="TakePicture" HorizontalAlignment="Left" Margin="233,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_TakePicture"/>
     </Grid>
 
 </Page>

@@ -10,7 +10,7 @@ using Accord.Video.FFMPEG;
 using Accord.Video.DirectShow;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using System.Windows.Media;
 using System.Threading;
 using System.IO;
 
@@ -18,7 +18,7 @@ using System.IO;
 namespace Micrographia
 {
 
-    public class Camera
+    public class Camera: IDisposable 
     {
 
         public Camera(MediaPage w)
@@ -34,7 +34,7 @@ namespace Micrographia
         }
 
         public MediaPage DisplayWindow;
-        private FilterInfo _currentDevice;
+        private FilterInfo _currentDevice; 
         private IVideoSource _videoSource;
 
         public void Start()
@@ -45,6 +45,7 @@ namespace Micrographia
                 _videoSource.NewFrame += this.DisplayWindow.video_NewFrame;
                 _videoSource.Start();
             }
+           
         }
 
         public void Stop()
@@ -59,12 +60,20 @@ namespace Micrographia
 
     }
 
+        public void Dispose()
+        {
+            if (_videoSource != null && _videoSource.IsRunning)
+            {
+                _videoSource.Stop();
+            }
+        }
+
 }
 
     /// <summary>
     /// Interaction logic for Media.xaml
     /// </summary>
-    public partial class MediaPage : Page, INotifyPropertyChanged
+    public partial class MediaPage : Page, INotifyPropertyChanged, IDisposable
     {
         public MediaPage()
         {
@@ -75,6 +84,7 @@ namespace Micrographia
             if (VideoDevices.Count > 0)
             {
                 CurrentDevice = VideoDevices[0];
+                myCamera.Start();
             }
             else
             {
@@ -170,9 +180,9 @@ namespace Micrographia
 
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { VideoPlayer.Source = Image; }));
             }
-            catch (VideoException exc)
+            catch (Exception exc)
             {
-                MessageBox.Show("Error on _videoSource_NewFrame:\n" +_writer.Codec.ToString()+_writer.BitRate.ToString()+" " +_writer.Height.ToString() +" " + _writer.Width.ToString() + Image.Height.ToString() + " " + _writer.Width.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show( String.Format("Error on _videoSource_NewFrame:{0}\n",  exc.Message) , "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 myCamera.Stop();
                 _recording = false;
 
@@ -211,13 +221,28 @@ namespace Micrographia
         private void Button_Record(object sender, RoutedEventArgs e)
         {
 
-            string fileName = @"C:\Users\Ale\Desktop\Video.avi";
-            _firstFrameTime = null;
+            if (!_recording)
+            {
+                _firstFrameTime = null;
+                string fileName = @"C:\Users\Ale\Desktop\Video.avi";
+                RecordButton.Content = "Stop";
+                RecordButton.Background = System.Windows.Media.Brushes.Red;
 
-            DateTime RecordingStartTime = DateTime.MinValue;
-            _writer = new VideoFileWriter();
-            _writer.Open(fileName, (int) Math.Round(Image.Width, 0), (int) Math.Round(Image.Height, 0), 1000/24, VideoCodec.MPEG4);
-            _recording = true;
+                DateTime RecordingStartTime = DateTime.MinValue;
+                _writer = new VideoFileWriter();
+                _writer.Open(fileName, (int)Math.Round(Image.Width, 0), (int)Math.Round(Image.Height, 0), 1000 / 20, VideoCodec.MPEG4, 1200 * 1000);
+                _recording = true;
+            }
+            else
+            {
+                _recording = false;
+                RecordButton.Background = PictureButton.Background;
+                RecordButton.Content = "Record";
+                _writer.Close();
+                _writer.Dispose();
+            }
+
+
         }
 
         private void Button_Stop_Record(object sender, RoutedEventArgs e)
@@ -226,5 +251,28 @@ namespace Micrographia
             _writer.Close();
             _writer.Dispose();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_TakePicture(object sender, RoutedEventArgs e)
+        {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(Image));
+                using (var filestream = new FileStream(@"C:\Users\Ale\Desktop\Pic.png", FileMode.Create))
+                {
+                    encoder.Save(filestream);
+                }
+            
+        }
+
+        public void Dispose()
+        {
+            myCamera.Dispose();
+            _writer?.Dispose();
+        }
+
     }
 }
