@@ -135,17 +135,6 @@ namespace Micrographia
         }
 
 
-       
-
-        private void Button_Stop(object sender, RoutedEventArgs e)
-        {
-            myCamera.Stop();
-        }
-
-        private void Button_Start(object sender, RoutedEventArgs e)
-        {
-            myCamera.Start();
-        }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -224,7 +213,7 @@ namespace Micrographia
             if (!_recording)
             {
                 _firstFrameTime = null;
-                string fileName = @"C:\Users\Ale\Desktop\Video.avi";
+                string fileName = String.Format(  @"C:\Users\Ale\Desktop\Video{0}.avi", Guid.NewGuid().ToString());
                 RecordButton.Content = "Stop";
                 RecordButton.Background = System.Windows.Media.Brushes.Red;
 
@@ -245,23 +234,14 @@ namespace Micrographia
 
         }
 
-        private void Button_Stop_Record(object sender, RoutedEventArgs e)
-        {
-            _recording = false;
-            _writer.Close();
-            _writer.Dispose();
-        }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
 
         private void Button_TakePicture(object sender, RoutedEventArgs e)
         {
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(Image));
-                using (var filestream = new FileStream(@"C:\Users\Ale\Desktop\Pic.png", FileMode.Create))
+                using (var filestream = new FileStream(String.Format(@"C:\Users\Ale\Desktop\Pic{0}.png", Guid.NewGuid().ToString() ), FileMode.Create))
                 {
                     encoder.Save(filestream);
                 }
