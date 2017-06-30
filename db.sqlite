@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS Study
+(
+File  TEXT PRIMARY KEY,
+Name TEXT, 
+Address TEXT, 
+City TEXT,
+State TEXT,
+Zip_Code TEXT,
+Phone TEXT,
+Mobile TEXT,
+E_Mail TEXT,
+HeightFeet INTEGER,
+HeightInches INTEGER,
+Gender TEXT,
+Weight Integer,
+Allergies TEXT,
+Comments TEXT,
+DoB DATE,
+Creation_Date DATE 
+CRA INTEGER,
+LCA INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS Media 
+(
+Path TEXT,
+Study TEXT REFERENCES Study(File),
+Comment TEXT,
+Type TEXT
+);
+
+
+

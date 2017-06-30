@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Micrographia"
       mc:Ignorable="d" 
     
-      Title="Media">
+      Title="Media" Unloaded="Page_Unloaded">
 
     <Grid  OpacityMask="Black" Margin="0,0,-8,0">
         <Image x:Name="VideoPlayer" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Stretch="Uniform"  Source="{Binding Image}" />

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Micrographia"
         mc:Ignorable="d"
-        Title="Microscope Imaging Software" Height="350" Width="628.056">
+        Title="Microscope Imaging Software" Height="350" Width="628.056" Closing="Window_Closing">
  <Grid>
         <Frame x:Name="_mainFrame" >
        

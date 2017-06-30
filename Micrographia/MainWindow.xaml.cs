@@ -17,19 +17,27 @@ using System.Windows.Media;
 
 namespace Micrographia
 {
-    
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MediaPage current;
+        private StudyForm sf;
+        
         public MainWindow()
         {
             InitializeComponent();
+            current = new MediaPage();
+            _mainFrame.Navigate(current);
+            sf = new StudyForm();
+            sf.Show();
 
-            _mainFrame.Navigate(new MediaPage());
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            current?.Dispose();
         }
     }
 

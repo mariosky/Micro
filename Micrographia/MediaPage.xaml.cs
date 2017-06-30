@@ -53,6 +53,7 @@ namespace Micrographia
             if (_videoSource != null && _videoSource.IsRunning)
             {
                 _videoSource.SignalToStop();
+                _videoSource.WaitForStop();
                 _videoSource.NewFrame -= new NewFrameEventHandler(this.DisplayWindow.video_NewFrame);
             }
 
@@ -255,5 +256,9 @@ namespace Micrographia
             _writer?.Dispose();
         }
 
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Bye Page");
+        }
     }
 }
